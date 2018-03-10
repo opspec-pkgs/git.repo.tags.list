@@ -1,0 +1,51 @@
+name: github.com/opspec-pkgs/git.repo.tags.list
+description: lists tags of a git repo
+inputs:
+  dotGitDir:
+    dir:
+      description: git repo .git directory
+      default: .git
+outputs:
+  tags:
+    array:
+      description: list of tags
+      constraints:
+        items:
+          properties:
+            name:
+              description: name of the tag
+            objectId:
+              description: object id of the tag; null for "lightweight" tags
+            targetObjectId:
+              description: object id of the tags target (what the tag refers to; typically a commit)
+            tagger:
+              description: tag creator info; null for "lightweight" tags
+              properties:
+                name: {}
+                email:
+                  format: email
+                when:
+                  properties:
+                    offset:
+                      description: timezone offset (from UTC) of creation time in minutes
+                      type: integer
+                    time:
+                      description: creation time of tag in seconds since unix epoch
+                      type: integer
+            message:
+              description: message for the tag; null for "lightweight" tags
+          required:
+            - name
+            - targetObjectId
+                
+version: 1.0.0
+run:
+  container:
+    image: { ref: 'opspecpkgs/git.repo.tags.list:1.0.0' }
+    cmd: [node, /cmd.js]
+    dirs:
+      /.git: $(dotGitDir)
+    files:
+      /cmd.js:
+      /tags: $(tags)
+    workDir: /
