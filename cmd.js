@@ -57,6 +57,6 @@ const listTags = async () => {
 listTags()
   .then(tags => fs.writeFileSync('/tags', JSON.stringify(tags)))
   .catch(err => {
-    console.log(err.message);
+    console.error(err.message);
     process.exit(1);
   })
